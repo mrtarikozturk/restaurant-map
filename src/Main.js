@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import MapView from 'react-native-maps';
 
+//My Imports
+import { SearchBar } from './components';
+
 
 const Main = () => {
     return (
@@ -15,6 +18,9 @@ const Main = () => {
                     longitudeDelta: 0.0421,
                 }}
             />
+            <View style={{ position: 'absolute' }} >
+                <SearchBar />
+            </View>
         </View>
     )
 }
