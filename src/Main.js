@@ -9,6 +9,7 @@ import { SearchBar, City } from './components';
 const Main = () => {
     //useStates
     const [cityList, setCityList] = useState([]);
+    const [restaurants, setRestaurants] = useState([]);
 
     // useEffects
     useEffect(() => {
@@ -21,8 +22,14 @@ const Main = () => {
         setCityList(data.cities);
     };
 
+    const selectCity = async (city) => {
+
+        const { data: { restaurants } } = await axios.get('http://opentable.herokuapp.com/api/restaurants?city=' + city);
+        setRestaurants(restaurants);
+    }
+
     const renderItem = ({ item }) => (
-        <City data={item} onPress={() => { }} />
+        <City data={item} onPress={() => { selectCity(item) }} />
     );
 
     return (
