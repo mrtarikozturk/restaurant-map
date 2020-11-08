@@ -1,12 +1,30 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList } from 'react-native';
 import MapView from 'react-native-maps';
+import axios from 'axios';
 
 //My Imports
-import { SearchBar } from './components';
-
+import { SearchBar, City } from './components';
 
 const Main = () => {
+    //useStates
+    const [cityList, setCityList] = useState([]);
+
+    // useEffects
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    // Functions
+    const fetchData = async () => {
+        const { data } = await axios.get('http://opentable.herokuapp.com/api/cities');
+        setCityList(data.cities);
+    };
+
+    const renderItem = ({ item }) => (
+        <City data={item} onPress={() => { }} />
+    );
+
     return (
         <View style={{ flex: 1 }}>
             <MapView
@@ -18,11 +36,18 @@ const Main = () => {
                     longitudeDelta: 0.0421,
                 }}
             />
-            <View style={{ position: 'absolute' }} >
+            <View style={{ position: 'absolute' }}>
                 <SearchBar />
+                <FlatList
+                    horizontal
+                    data={cityList}
+                    renderItem={renderItem}
+                    keyExtractor={(_, index) => index.toString()}
+                    showsVerticalScrollIndicator={false}
+                />
             </View>
         </View>
-    )
-}
+    );
+};
 
 export default Main;
