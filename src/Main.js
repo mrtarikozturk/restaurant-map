@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
 
 //My Imports
@@ -55,7 +55,24 @@ const Main = () => {
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-            />
+            >
+                {
+                    restaurants.map((restaurant, index) => {
+                        return (
+                            <Marker
+                                key={index}
+                                coordinate={
+                                    {
+                                        latitude: restaurant.lat,
+                                        longitude: restaurant.lng
+                                    }
+                                }
+                            />
+                        )
+
+                    })
+                }
+            </MapView>
             <View style={{ position: 'absolute' }}>
                 <SearchBar onChangeText={filterCity} />
                 <FlatList
@@ -63,7 +80,7 @@ const Main = () => {
                     data={cityList}
                     renderItem={renderItem}
                     keyExtractor={(_, index) => index.toString()}
-                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 />
             </View>
         </View>
