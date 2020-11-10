@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
@@ -18,6 +18,9 @@ const Main = () => {
         fetchData();
     }, []);
 
+    //useRefs
+    const mapRef = useRef(null);
+
     // Functions
     const fetchData = async () => {
         const { data } = await axios.get('http://opentable.herokuapp.com/api/cities');
@@ -29,6 +32,18 @@ const Main = () => {
 
         const { data: { restaurants } } = await axios.get('http://opentable.herokuapp.com/api/restaurants?city=' + city);
         setRestaurants(restaurants);
+
+        const restaurantsCoordinates = restaurants.map((item, index) => {
+            return ({
+                latitude: item.lat,
+                longitude: item.lng
+            })
+        })
+
+        mapRef.current.fitToCoordinates(restaurantsCoordinates, {
+            edgePadding: { top: 500, right: 100, bottom: 100, left: 100 },
+            animated: true
+        })
     }
 
     const renderItem = ({ item }) => (
@@ -42,12 +57,12 @@ const Main = () => {
             return cityName.indexOf(userText) > -1;
         });
         setCityList(filteredList);
-
     }
 
     return (
         <View style={{ flex: 1 }}>
             <MapView
+                ref={mapRef}
                 style={{ flex: 1 }}
                 initialRegion={{
                     latitude: 37.78825,
@@ -57,14 +72,14 @@ const Main = () => {
                 }}
             >
                 {
-                    restaurants.map((restaurant, index) => {
+                    restaurants.map((item, index) => {
                         return (
                             <Marker
                                 key={index}
                                 coordinate={
                                     {
-                                        latitude: restaurant.lat,
-                                        longitude: restaurant.lng
+                                        latitude: item.lat,
+                                        longitude: item.lng
                                     }
                                 }
                             />
